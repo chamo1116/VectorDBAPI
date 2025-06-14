@@ -5,6 +5,8 @@
 - **Document Management**
 
   - Create, read, update, and delete documents.
+  - Persistence in memory.
+  - Lock memory allocation strategy.
   - Organize documents in libraries.
   - Support for document metadata.
   - Efficient document chunking.
@@ -21,6 +23,95 @@
   - Create and manage document libraries.
   - Index libraries for efficient search.
   - Support for library metadata.
+  - Persistence in memory.
+  - Lock memory allocation strategy.
+
+## Technical Decisions
+
+### Indexing Algorithms
+
+#### Brute Force Index
+
+The `BruteForceIndex` class implements exact nearest neighbor search using euclidean distance.
+
+**Key Features:**
+
+- Exact search results.
+- Euclidian distance for vector comparison.
+- Support for metadata filtering.
+- Simple implementation with O(n) query time.
+
+**Implementation Details:**
+
+- Uses a heap to maintain top-k results.
+- Computes euclidian distance between query vector and all indexed vectors.
+- Applies filters before similarity computation.
+- Returns results sorted by euclidian distance.
+
+#### KD-Tree Index
+
+The `KDTreeIndex` class implements approximate nearest neighbor search using a KD-Tree data structure.
+
+**Key Features:**
+
+- Efficient approximate nearest neighbor search.
+- Balanced tree structure for logarithmic search time.
+- Support for metadata filtering.
+- Optimized for high-dimensional vector spaces.
+
+**Implementation Details:**
+
+- Builds a balanced KD-Tree by recursively splitting points along alternating dimensions.
+- Uses iterative traversal for nearest neighbor search.
+- Maintains a max-heap for top-k results.
+- Applies pruning based on axis-aligned bounding boxes.
+- Supports cosine similarity for vector comparison.
+
+**Tree Structure:**
+
+```python
+{
+    "point_idx": int,      # Index of the point in the chunks list
+    "point": List[float],  # The actual vector
+    "axis": int,          # The splitting dimension
+    "left": dict,       # Left subtree
+    "right": dict       # Right subtree
+}
+```
+
+**Search Process:**
+
+1. Start at root node
+2. Compare query point with current node along splitting axis.
+3. Iteratively search the "near" subtree first.
+4. If necessary, search the "far" subtree.
+5. Maintain a heap of k nearest neighbors.
+
+**Algorithm Selection:**
+
+- Brute Force is used when:
+  - Dataset size is small (< 1000 vectors)
+  - Exact results are required
+  - Memory usage is not a concern
+- KD-Tree is used when:
+  - Dataset size is large
+  - Approximate results are acceptable
+  - Memory efficiency is important
+  - High-dimensional vectors are present
+
+**Performance Considerations:**
+
+- Brute Force:
+  - Time Complexity: O(n) for each query
+  - Space Complexity: O(n)
+  - Best for small datasets
+  - Guarantees exact results
+- KD-Tree:
+  - Time Complexity: O(log n) average case
+  - Space Complexity: O(n)
+  - Best for large datasets
+  - Provides approximate results
+  - Performance degrades in high dimensions
 
 ## Installation
 
