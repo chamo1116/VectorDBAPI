@@ -1,50 +1,52 @@
 # VectorDB API
 
-A FastAPI-based REST API for vector document storage and search.
+## Features
+
+- **Document Management**
+
+  - Create, read, update, and delete documents.
+  - Organize documents in libraries.
+  - Support for document metadata.
+  - Efficient document chunking.
+
+- **Vector Search**
+
+  - Multiple indexing algorithms:
+    - Brute Force (exact search).
+    - KD-Tree (approximate nearest neighbors).
+  - Support for metadata filtering.
+  - Configurable search parameters.
+
+- **Library Management**
+  - Create and manage document libraries.
+  - Index libraries for efficient search.
+  - Support for library metadata.
 
 ## Installation
 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/vectordb.git
-cd vectordb
+git clone https://github.com/chamo1116/VectorDBAPI.git
+cd VectorDBAPI
 ```
 
-2. Create a virtual environment:
+2. Build the image:
 
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+docker compose build --no-cache
 ```
 
-3. Install the package in development mode:
+3. Run container:
 
 ```bash
-pip install -e ".[dev]"
-```
-
-## Development
-
-1. Install development dependencies:
-
-```bash
-pip install -e ".[dev]"
+docker compose up -d
 ```
 
 2. Run tests:
 
 ```bash
-pytest
-```
-
-3. Run linting:
-
-```bash
-flake8
-black .
-isort .
-mypy .
+docker compose exec app uv run pytest
 ```
 
 ## API Documentation
@@ -52,7 +54,6 @@ mypy .
 Once the server is running, you can access:
 
 - Swagger UI: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
 
 ## HTTP Requests
 
@@ -171,3 +172,132 @@ curl -X POST "http://localhost:8000/libraries/{library_id}/chunks/search" \
      -H "Content-Type: application/json" \
      -d '{"query": "search query", "limit": 10}'
 ```
+
+## Future Improvements
+
+### Architecture Improvements
+
+1. **Microservices Architecture**
+
+   - Split the monolithic application into microservices:
+     - Indexing Service: Handle vector indexing and search.
+     - API Gateway: Manage authentication and request routing.
+     - Metadata Service: Handle metadata storage and filtering.
+     - Vector Service: Manage vector operations and transformations.
+
+2. **Message Queue Integration**
+
+   - Implement RabbitMQ or Kafka for:
+     - Asynchronous indexing operations.
+     - Event-driven updates.
+     - Better handling of bulk operations.
+     - Improved scalability for write operations.
+
+3. **Caching Layer**
+   - Add Redis for:
+     - Caching frequent queries.
+     - Storing temporary search results.
+     - Managing rate limiting.
+
+### Scalability Enhancements
+
+1. **Horizontal Scaling**
+
+   - Implement sharding for vector data.
+   - Add load balancing for API endpoints.
+   - Support for distributed indexing.
+   - Implement consistent hashing for data distribution.
+
+2. **Database Improvements**
+
+   - Add support for multiple database backends:
+     - SQLlite, if the idea is continue saving the data in memory (not scalable).
+     - PostgreSQL with pgvector.
+     - Milvus.
+     - Weaviate.
+     - Qdrant.
+   - Implement database abstraction layer.
+   - Add support for hybrid search (vector + keyword).
+
+3. **Performance Optimizations**
+   - Implement batch processing for indexing.
+   - Add support for more ANN algorithms:
+     - HNSW (Hierarchical Navigable Small World).
+     - IVF (Inverted File Index).
+     - Product Quantization.
+   - Implement vector compression techniques.
+
+### Feature Enhancements
+
+1. **Search Capabilities**
+
+   - Add support for:
+     - Multi-vector search.
+     - Hybrid search (vector + keyword).
+     - Semantic search.
+     - Range queries.
+     - Faceted search.
+
+2. **Indexing Algorithms**
+
+   - Implement additional algorithms:
+     - Ball Tree.
+     - LSH (Locality-Sensitive Hashing).
+     - Annoy.
+     - FAISS.
+   - Implement automatic algorithm selection based on data characteristics.
+
+3. **Monitoring and Observability**
+   - Add comprehensive metrics:
+     - Query latency.
+     - Index size.
+     - Memory usage.
+     - Cache hit rates.
+   - Implement distributed tracing.
+   - Add health checks and alerts.
+
+### Security Improvements
+
+1. **Data Security**
+   - Add encryption at rest.
+   - Add data masking for sensitive information.
+   - Implement audit logging.
+   - Add support for data retention policies.
+
+### Developer Experience
+
+1. **Testing**
+
+   - Add load testing scenarios.
+   - Create integration tests for all supported databases.
+
+2. **Development Tools**
+   - Add CLI tool for management.
+   - Create development containers.
+   - Improve documentation.
+
+### Deployment Improvements
+
+1. **Containerization**
+
+   - Add Kubernetes support.
+   - Create deployment templates.
+
+2. **CI/CD**
+   - Add GitHub Actions workflows.
+   - Implement automated testing.
+   - Add automated deployment.
+   - Add version management.
+
+### Data Management
+
+1. **Backup and Recovery**
+
+   - Implement automated backups.
+   - Add point-in-time recovery.
+
+2. **Data Versioning**
+   - Add support for vector versioning.
+   - Implement metadata versioning.
+   - Create rollback capabilities.
+   - Add data lineage tracking.
